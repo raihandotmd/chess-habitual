@@ -1,0 +1,113 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 300px;
+  margin: 0;
+  padding: 15px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+h1 {
+  font-size: 18px;
+  margin: 0;
+  color: #333;
+  text-align: center;
+}
+
+.habits-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#habits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.habit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.delete-habit {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-habit-form {
+  display: flex;
+  gap: 5px;
+}
+
+#new-habit {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+#add-habit {
+  padding: 8px 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.settings {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttons-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+#show-button {
+  flex: 1;
+  padding: 8px 12px;
+  background-color: #4285F4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#show-button:hover {
+  background-color: #3367D6;
+}
+
+#reset-habits {
+  flex: 1;
+  padding: 8px 12px;
+  background-color: #F4B400;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#reset-habits:hover {
+  background-color: #E09600;
+}
+

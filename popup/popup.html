@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Chess Habits Reminder</h1>
+    
+    <div class="habits-container">
+      <div id="habits-list">
+        <!-- Habits will be inserted here -->
+      </div>
+      
+      <div class="add-habit-form">
+        <input type="text" id="new-habit" placeholder="Add a new habit...">
+        <button id="add-habit">Add</button>
+      </div>
+    </div>
+    
+    <div class="settings">
+      <label>
+        <input type="checkbox" id="show-reminder"> 
+        Show reminder on Chess.com
+      </label>
+      
+      <div class="buttons-container">
+        <button id="show-button">Show</button>
+        <button id="reset-habits">Reset Habits</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
+

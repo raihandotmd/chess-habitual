@@ -1,0 +1,68 @@
+.chess-habits-reminder {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 250px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 10px;
+}
+
+.chess-habits-reminder h2 {
+  font-size: 16px;
+  margin: 0 0 10px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chess-habits-reminder ul {
+  margin: 0;
+  padding: 0 0 0 20px;
+}
+
+.chess-habits-reminder li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.chess-habits-reminder .close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #999;
+}
+
+.chess-habits-reminder .close-button:hover {
+  color: #333;
+}
+
+.chess-habits-reminder .minimize-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #999;
+  margin-right: 5px;
+}
+
+.chess-habits-reminder.minimized {
+  width: auto;
+  height: auto;
+}
+
+.chess-habits-reminder.minimized ul {
+  display: none;
+}
+
+.chess-habits-reminder .drag-handle {
+  cursor: move;
+  flex-grow: 1;
+}
