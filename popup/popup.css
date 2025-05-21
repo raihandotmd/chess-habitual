@@ -1,113 +1,201 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  width: 300px;
+  width: 320px;
+  height: 480px;
   margin: 0;
-  padding: 15px;
+  padding: 12px;
+  color: #333;
+  overflow-x: hidden;
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
+  height: 100%;
 }
 
 h1 {
-  font-size: 18px;
-  margin: 0;
+  font-size: 16px;
+  margin: 0 0 8px 0;
   color: #333;
   text-align: center;
+  font-weight: 500;
 }
 
-.habits-container {
+/* Tabs Container */
+.tabs-container {
+  width: 100%;
+  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  flex-grow: 1;
+  overflow: hidden;
 }
 
-#habits-list {
+/* Tabs Navigation */
+.tabs {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 8px;
 }
 
-.habit-item {
+.tab-button {
+  padding: 6px 10px;
+  background-color: #f5f5f5;
+  border: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  margin-right: 1px;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.tab-button:hover {
+  background-color: #e0e0e0;
+}
+
+.tab-button.active {
+  background-color: #4285F4;
+  color: white;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  padding: 8px 0;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Habit Items - All levels use red now */
+.habit-outline {
+  padding: 8px;
+  margin-bottom: 4px;
+  background-color: #ffebee;
+  border-left: 3px solid #f44336;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+/* Level 4 uses green */
+#level4-content .habit-outline {
+  background-color: #e8f5e9;
+  border-left: 3px solid #4caf50;
+}
+
+#level4-content .habit-outline:hover {
+  background-color: #c8e6c9;
+}
+
+
+.habit-outline:hover {
+  background-color: #ffcdd2;
+}
+
+.habit-outline .toggle-icon {
+  font-size: 12px;
+  transition: transform 0.3s;
+  color: #757575;
+}
+
+.habit-outline.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.habit-details {
+  display: none;
   padding: 8px;
-  background-color: #f5f5f5;
+  margin: 0 0 8px 8px;
+  background-color: #e3f2fd;
+  border-left: 3px solid #2196f3;
   border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #0d47a1;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.delete-habit {
-  background: none;
-  border: none;
-  color: #ff4d4d;
-  cursor: pointer;
-  font-weight: bold;
+.habit-details.visible {
+  display: block;
 }
 
-.add-habit-form {
-  display: flex;
-  gap: 5px;
-}
-
-#new-habit {
-  flex-grow: 1;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-#add-habit {
-  padding: 8px 12px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
+/* Settings */
 .settings {
-  margin-top: 10px;
-  padding-top: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
   border-top: 1px solid #eee;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
+.settings label {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.settings input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Buttons */
 .buttons-container {
   display: flex;
-  gap: 10px;
-  margin-top: 5px;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 #show-button {
   flex: 1;
-  padding: 8px 12px;
-  background-color: #4285F4;
-  color: white;
+  padding: 6px 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+#show-button {
+  background-color: #4285F4;
+  color: white;
 }
 
 #show-button:hover {
   background-color: #3367D6;
 }
 
-#reset-habits {
-  flex: 1;
-  padding: 8px 12px;
-  background-color: #F4B400;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+/* Credits Section */
+.credits-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
 }
 
-#reset-habits:hover {
-  background-color: #E09600;
+.credits-section a {
+  color: #4285F4;
+  text-decoration: none;
 }
 
+.credits-section a:hover {
+  text-decoration: underline;
+}
+
+.author-credit {
+  margin-top: 4px;
+  font-weight: 500;
+}

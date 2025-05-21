@@ -1,38 +1,63 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-  <div class="container">
-    <h1>Chess Habits Reminder</h1>
-    
-    <div class="habits-container">
-      <div id="habits-list">
-        <!-- Habits will be inserted here -->
-      </div>
-      
-      <div class="add-habit-form">
-        <input type="text" id="new-habit" placeholder="Add a new habit...">
-        <button id="add-habit">Add</button>
-      </div>
-    </div>
-    
-    <div class="settings">
-      <label>
-        <input type="checkbox" id="show-reminder"> 
-        Show reminder on Chess.com
-      </label>
-      
-      <div class="buttons-container">
-        <button id="show-button">Show</button>
-        <button id="reset-habits">Reset Habits</button>
-      </div>
-    </div>
-  </div>
-  
-  <script src="popup.js"></script>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="popup.css">
+        <title>Chess Habits Reminder</title>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Chess Habits Reminder</h1>
+
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-button active" data-level="level1">Level 1 | 0-700</button>
+                    <button class="tab-button" data-level="level2">Level 2 | 700-1100</button>
+                    <button class="tab-button" data-level="level3">Level 3 | 1100-1550</button>
+                    <button class="tab-button" data-level="level4">Level 4 | 1550-2000+</button>
+                </div>
+
+                <div class="tab-content active" id="level1-content">
+                    <!-- Level 1 habits will be inserted here -->
+                </div>
+
+                <div class="tab-content" id="level2-content">
+                    <!-- Level 2 habits will be inserted here -->
+                </div>
+
+                <div class="tab-content" id="level3-content">
+                    <!-- Level 3 habits will be inserted here -->
+                </div>
+
+                <div class="tab-content" id="level4-content">
+                    <!-- Level 4 habits will be inserted here -->
+                </div>
+            </div>
+
+            <div class="settings">
+                <label>
+                    <input type="checkbox" id="show-reminder"> 
+                    Show reminder on Chess.com
+                </label>
+
+                <div class="buttons-container">
+                    <button id="show-button">Show</button>
+                </div>
+            </div>
+            <div class="credits-section">
+                <div class="github-link">
+                    <a href="https://github.com/raihandotmd/chess-habitual" target="_blank">GitHub Repository</a>
+                </div>
+                <div class="author-credit">
+                    Made by project.raihan
+                </div>
+            </div>
+
+        </div>
+
+        <script src="../data/data.js"></script>
+        <script src="popup.js"></script>
+    </body>
 </html>
 
