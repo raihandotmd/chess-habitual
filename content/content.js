@@ -38,21 +38,21 @@ function createHabitsReminder() {
   select.addEventListener('change', function() {
     updateHabitsForLevel(this.value);
     // Save selected level to storage
-    chrome.storage.sync.set({ selectedLevel: this.value });
+    browser.storage.sync.set({ selectedLevel: this.value });
   });
 
   // Make the reminder box draggable
   makeDraggable(reminderBox, dragHandle);
 
   // Load selected level from storage and update habits
-  chrome.storage.sync.get('selectedLevel', function(result) {
+  browser.storage.sync.get('selectedLevel', function(result) {
     const selectedLevel = result.selectedLevel || 'level1'; // Default to level1 if not set
     select.value = selectedLevel;
     updateHabitsForLevel(selectedLevel);
   });
 
   // Restore position if saved
-  chrome.storage.sync.get('position', function(result) {
+  browser.storage.sync.get('position', function(result) {
     if (result.position) {
       reminderBox.style.top = result.position.top;
       reminderBox.style.left = result.position.left;
@@ -238,7 +238,7 @@ function makeDraggable(element, handle) {
     document.onmousemove = null;
 
     // Save the final position to Chrome storage
-    chrome.storage.sync.set({
+    browser.storage.sync.set({
       position: {
         top: element.style.top,
         left: element.style.left
@@ -254,7 +254,7 @@ function makeDraggable(element, handle) {
  */
 function initialize() {
   // Check if the reminder should be shown based on stored settings
-  chrome.storage.sync.get('showReminder', function(result) {
+  browser.storage.sync.get('showReminder', function(result) {
     const showReminder = result.showReminder !== undefined ? result.showReminder : true; // Default to true
 
     // Create reminder only if enabled and on a chess.com domain
@@ -284,7 +284,7 @@ if (document.readyState === 'complete') {
  * - "updateLevel": Updates the displayed habits to a new level.
  * - "getSelectedLevel": Returns the currently selected level from the page or storage.
  */
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   const reminderBox = document.querySelector('.chess-habits-reminder-box');
   const levelSelect = document.querySelector('.chess-habits-level-select');
 
@@ -314,7 +314,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         sendResponse({ level: levelSelect.value });
       } else {
         // If reminder box (and thus select element) doesn't exist, get level from storage
-        chrome.storage.sync.get('selectedLevel', function(result) {
+        browser.storage.sync.get('selectedLevel', function(result) {
           sendResponse({ level: result.selectedLevel || 'level1' }); // Default to level1
         });
         return true; // Indicates that the response will be sent asynchronously

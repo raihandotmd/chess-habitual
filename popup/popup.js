@@ -14,7 +14,7 @@ const tabContents = document.querySelectorAll('.tab-content'); // All elements t
  * and updates the popup UI accordingly.
  */
 function loadSettings() {
-  chrome.storage.sync.get(['showReminder', 'selectedLevel'], function(result) {
+  browser.storage.sync.get(['showReminder', 'selectedLevel'], function(result) {
     const showReminder = result.showReminder !== undefined ? result.showReminder : true; // Default to true if not set
     showReminderCheckbox.checked = showReminder;
     
@@ -33,7 +33,7 @@ function loadSettings() {
  */
 function toggleReminder() {
   const showReminder = showReminderCheckbox.checked;
-  chrome.storage.sync.set({ showReminder });
+  browser.storage.sync.set({ showReminder });
 }
 
 /**
@@ -41,12 +41,12 @@ function toggleReminder() {
  * Alerts the user if the current tab is not a Chess.com page.
  */
 function showReminder() {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+  browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
     const activeTab = tabs[0];
     // Check if the current tab is a Chess.com page
     if (activeTab.url && activeTab.url.includes('chess.com')) {
       // Send a message to the content script to trigger showing the reminder
-      chrome.tabs.sendMessage(activeTab.id, {action: "showReminder"});
+      browser.tabs.sendMessage(activeTab.id, {action: "showReminder"});
     } else {
       alert("Please navigate to Chess.com to show the reminder!");
     }
@@ -70,13 +70,13 @@ function activateTab(tabButton) {
   document.getElementById(level + '-content').classList.add('active');
   
   // Save the newly selected level to storage
-  chrome.storage.sync.set({ selectedLevel: level });
+  browser.storage.sync.set({ selectedLevel: level });
   
   // Notify content script about the level change
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+  browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
     const activeTab = tabs[0];
     if (activeTab.url && activeTab.url.includes('chess.com')) {
-      chrome.tabs.sendMessage(activeTab.id, {
+      browser.tabs.sendMessage(activeTab.id, {
         action: "updateLevel",
         level: level
       });
@@ -174,14 +174,14 @@ function populateAllTabs() {
  * Sets 'showReminder' to true and 'selectedLevel' to 'level1' by default.
  */
 function initializeSettings() {
-  chrome.storage.sync.get(['showReminder', 'selectedLevel'], function(result) {
+  browser.storage.sync.get(['showReminder', 'selectedLevel'], function(result) {
     // Set default for 'showReminder' if it's not defined
     if (result.showReminder === undefined) {
-      chrome.storage.sync.set({ showReminder: true });
+      browser.storage.sync.set({ showReminder: true });
     }
     // Set default for 'selectedLevel' if it's not defined
     if (result.selectedLevel === undefined) {
-      chrome.storage.sync.set({ selectedLevel: 'level1' });
+      browser.storage.sync.set({ selectedLevel: 'level1' });
     }
   });
 }
