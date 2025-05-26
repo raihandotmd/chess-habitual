@@ -45,14 +45,14 @@ function createHabitsReminder() {
   makeDraggable(reminderBox, dragHandle);
 
   // Load selected level from storage and update habits
-  browser.storage.sync.get('selectedLevel', function(result) {
+  browser.storage.sync.get({selectedLevel: null}, function(result) {
     const selectedLevel = result.selectedLevel || 'level1'; // Default to level1 if not set
     select.value = selectedLevel;
     updateHabitsForLevel(selectedLevel);
   });
 
   // Restore position if saved
-  browser.storage.sync.get('position', function(result) {
+  browser.storage.sync.get({position: null}, function(result) {
     if (result.position) {
       reminderBox.style.top = result.position.top;
       reminderBox.style.left = result.position.left;
@@ -254,7 +254,7 @@ function makeDraggable(element, handle) {
  */
 function initialize() {
   // Check if the reminder should be shown based on stored settings
-  browser.storage.sync.get('showReminder', function(result) {
+  browser.storage.sync.get({showReminder: null}, function(result) {
     const showReminder = result.showReminder !== undefined ? result.showReminder : true; // Default to true
 
     // Create reminder only if enabled and on a chess.com domain
@@ -314,7 +314,7 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         sendResponse({ level: levelSelect.value });
       } else {
         // If reminder box (and thus select element) doesn't exist, get level from storage
-        browser.storage.sync.get('selectedLevel', function(result) {
+        browser.storage.sync.get({selectedLevel: null}, function(result) {
           sendResponse({ level: result.selectedLevel || 'level1' }); // Default to level1
         });
         return true; // Indicates that the response will be sent asynchronously

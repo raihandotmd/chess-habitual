@@ -14,7 +14,7 @@ const tabContents = document.querySelectorAll('.tab-content'); // All elements t
  * and updates the popup UI accordingly.
  */
 function loadSettings() {
-  browser.storage.sync.get(['showReminder', 'selectedLevel'], function(result) {
+  browser.storage.sync.get({showReminder: null, selectedLevel: null}, function(result) {
     const showReminder = result.showReminder !== undefined ? result.showReminder : true; // Default to true if not set
     showReminderCheckbox.checked = showReminder;
     
@@ -174,7 +174,7 @@ function populateAllTabs() {
  * Sets 'showReminder' to true and 'selectedLevel' to 'level1' by default.
  */
 function initializeSettings() {
-  browser.storage.sync.get(['showReminder', 'selectedLevel'], function(result) {
+  browser.storage.sync.get({showReminder: null, selectedLevel: null}, function(result) {
     // Set default for 'showReminder' if it's not defined
     if (result.showReminder === undefined) {
       browser.storage.sync.set({ showReminder: true });
