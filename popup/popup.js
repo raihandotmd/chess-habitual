@@ -14,12 +14,12 @@ const tabContents = document.querySelectorAll('.tab-content'); // All elements t
  * and updates the popup UI accordingly.
  */
 function loadSettings() {
-  browser.storage.sync.get({showReminder: null, selectedLevel: null}, function(result) {
-    const showReminder = result.showReminder !== undefined ? result.showReminder : true; // Default to true if not set
+  browser.storage.sync.get({showReminder: true, selectedLevel: 'level1'}, function(result) {
+    const showReminder = result.showReminder;
+    const selectedLevel = result.selectedLevel;
     showReminderCheckbox.checked = showReminder;
     
     // Set active tab based on selected level
-    const selectedLevel = result.selectedLevel || 'level1'; // Default to level1
     const tabToActivate = document.querySelector(`.tab-button[data-level="${selectedLevel}"]`);
     if (tabToActivate) {
       activateTab(tabToActivate);
@@ -174,15 +174,14 @@ function populateAllTabs() {
  * Sets 'showReminder' to true and 'selectedLevel' to 'level1' by default.
  */
 function initializeSettings() {
-  browser.storage.sync.get({showReminder: null, selectedLevel: null}, function(result) {
-    // Set default for 'showReminder' if it's not defined
-    if (result.showReminder === undefined) {
-      browser.storage.sync.set({ showReminder: true });
-    }
-    // Set default for 'selectedLevel' if it's not defined
-    if (result.selectedLevel === undefined) {
-      browser.storage.sync.set({ selectedLevel: 'level1' });
-    }
+  browser.storage.sync.get({showReminder: true, selectedLevel: 'level1'}, function(currentValues) {
+    // Re-save the values. If they were not in storage, they will be set to the defaults.
+    // If they were already in storage, they will be overwritten by their current values (or defaults if the get somehow failed).
+    // This ensures the defaults are populated on first run.
+    browser.storage.sync.set({
+      showReminder: currentValues.showReminder,
+      selectedLevel: currentValues.selectedLevel
+    });
   });
 }
 
