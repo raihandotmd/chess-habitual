@@ -19,7 +19,7 @@
     "content_scripts": [
         {
             "matches": ["*://*.chess.com/*"],
-            "js": ["data/data.js", "content/content.js"],
+            "js": ["lib/browser-polyfill.js", "data/data.js", "content/content.js"],
             "css": ["content/content.css"]
         }
     ],
