@@ -1,333 +1,324 @@
-// Create and inject the habits reminder box
+/**
+ * Creates and injects the main habits reminder box into the page.
+ * It handles the creation of the header, level selector, and habits container.
+ * Also sets up event listeners and loads initial data.
+ */
 function createHabitsReminder() {
-    // Check if reminder already exists and remove it to start fresh
-    const existingReminder = document.querySelector('.chess-habits-reminder-box');
-    if (existingReminder) {
-        existingReminder.remove();
+  // Check if reminder already exists and remove it to start fresh
+  const existingReminder = document.querySelector('.chess-habits-reminder-box');
+  if (existingReminder) {
+    existingReminder.remove();
+  }
+
+  // Create reminder container with unique class name
+  const reminderBox = document.createElement('div');
+  reminderBox.className = 'chess-habits-reminder-box';
+
+  // Create header
+  const { header, dragHandle, minimizeButton, closeButton } = createHeaderElements();
+
+  // Create level selector
+  const { levelSelector, select } = createLevelSelectorElement();
+
+  // Create habits container
+  const habitsContainer = createHabitsContainerElement();
+
+  // Add elements to the reminder box
+  reminderBox.appendChild(header);
+  reminderBox.appendChild(levelSelector);
+  reminderBox.appendChild(habitsContainer);
+
+  // Add to the page
+  document.body.appendChild(reminderBox);
+
+  // Event listeners for header buttons
+  attachHeaderEventListeners(reminderBox, closeButton, minimizeButton);
+
+  // Event listener for select element to update habits when level changes
+  select.addEventListener('change', function() {
+    updateHabitsForLevel(this.value);
+    // Save selected level to storage
+    chrome.storage.sync.set({ selectedLevel: this.value });
+  });
+
+  // Make the reminder box draggable
+  makeDraggable(reminderBox, dragHandle);
+
+  // Load selected level from storage and update habits
+  chrome.storage.sync.get('selectedLevel', function(result) {
+    const selectedLevel = result.selectedLevel || 'level1'; // Default to level1 if not set
+    select.value = selectedLevel;
+    updateHabitsForLevel(selectedLevel);
+  });
+
+  // Restore position if saved
+  chrome.storage.sync.get('position', function(result) {
+    if (result.position) {
+      reminderBox.style.top = result.position.top;
+      reminderBox.style.left = result.position.left;
+      reminderBox.style.right = 'auto'; // Ensure this doesn't conflict with left positioning
     }
-
-    // Create reminder container with unique class name
-    const reminderBox = document.createElement('div');
-    reminderBox.className = 'chess-habits-reminder-box';
-
-    // Create header with title and buttons
-    const header = document.createElement('div');
-    header.className = 'chess-habits-header';
-
-    const dragHandle = document.createElement('span');
-    dragHandle.className = 'chess-habits-drag-handle';
-    dragHandle.textContent = 'Chess Habits';
-
-    const minimizeButton = document.createElement('button');
-    minimizeButton.className = 'chess-habits-minimize-button';
-    minimizeButton.textContent = '−';
-    minimizeButton.title = 'Minimize';
-
-    const closeButton = document.createElement('button');
-    closeButton.className = 'chess-habits-close-button';
-    closeButton.textContent = '×';
-    closeButton.title = 'Close';
-
-    header.appendChild(dragHandle);
-    header.appendChild(minimizeButton);
-    header.appendChild(closeButton);
-
-    // Create level selector
-    const levelSelector = document.createElement('div');
-    levelSelector.className = 'chess-habits-level-selector';
-
-    const select = document.createElement('select');
-    select.className = 'chess-habits-level-select';
-
-    // Add options for each level
-    const levels = [
-        { value: 'level1', text: 'LEVEL 1 | 0-700' },
-        { value: 'level2', text: 'LEVEL 2 | 700-1100' },
-        { value: 'level3', text: 'LEVEL 3 | 1100-1550' },
-        { value: 'level4', text: 'LEVEL 4 | 1550-2000+' }
-    ];
-
-    levels.forEach(level => {
-        const option = document.createElement('option');
-        option.value = level.value;
-        option.textContent = level.text;
-        select.appendChild(option);
-    });
-
-    levelSelector.appendChild(select);
-
-    // Create habits container
-    const habitsContainer = document.createElement('div');
-    habitsContainer.className = 'chess-habits-container';
-
-    // Add elements to the reminder box
-    reminderBox.appendChild(header);
-    reminderBox.appendChild(levelSelector);
-    reminderBox.appendChild(habitsContainer);
-
-    // Add to the page
-    document.body.appendChild(reminderBox);
-
-    // Event listeners
-    closeButton.addEventListener('click', function() {
-        reminderBox.remove();
-    });
-
-    minimizeButton.addEventListener('click', function() {
-        reminderBox.classList.toggle('chess-habits-minimized');
-        minimizeButton.textContent = reminderBox.classList.contains('chess-habits-minimized') ? '+' : '−';
-    });
-
-    select.addEventListener('change', function() {
-        updateHabitsForLevel(this.value);
-
-        // Save selected level to storage
-        chrome.storage.sync.set({ selectedLevel: this.value });
-    });
-
-    // Make the reminder box draggable
-    makeDraggable(reminderBox, dragHandle);
-
-    // Load selected level from storage and update habits
-    chrome.storage.sync.get('selectedLevel', function(result) {
-        const selectedLevel = result.selectedLevel || 'level1';
-        select.value = selectedLevel;
-        updateHabitsForLevel(selectedLevel);
-    });
-
-    // Restore position if saved
-    chrome.storage.sync.get('position', function(result) {
-        if (result.position) {
-            reminderBox.style.top = result.position.top;
-            reminderBox.style.left = result.position.left;
-            reminderBox.style.right = 'auto';
-        }
-    });
+  });
 }
 
-// Update habits display for the selected level
+/**
+ * Creates the header elements for the reminder box.
+ * Includes title, drag handle, minimize, and close buttons.
+ * @returns {object} An object containing the header, dragHandle, minimizeButton, and closeButton elements.
+ */
+function createHeaderElements() {
+  const header = document.createElement('div');
+  header.className = 'chess-habits-header';
+
+  const dragHandle = document.createElement('span');
+  dragHandle.className = 'chess-habits-drag-handle';
+  dragHandle.textContent = 'Chess Habits'; // Title of the reminder box
+
+  const minimizeButton = document.createElement('button');
+  minimizeButton.className = 'chess-habits-minimize-button';
+  minimizeButton.textContent = '−'; // Minimize symbol
+  minimizeButton.title = 'Minimize';
+
+  const closeButton = document.createElement('button');
+  closeButton.className = 'chess-habits-close-button';
+  closeButton.textContent = '×'; // Close symbol
+  closeButton.title = 'Close';
+
+  header.appendChild(dragHandle);
+  header.appendChild(minimizeButton);
+  header.appendChild(closeButton);
+
+  return { header, dragHandle, minimizeButton, closeButton };
+}
+
+/**
+ * Creates the level selector dropdown element.
+ * Populates options dynamically from ChessHabits.HABITS_DATA.
+ * @returns {object} An object containing the levelSelector (div wrapper) and select (dropdown) elements.
+ */
+function createLevelSelectorElement() {
+  const levelSelector = document.createElement('div');
+  levelSelector.className = 'chess-habits-level-selector';
+
+  const select = document.createElement('select');
+  select.className = 'chess-habits-level-select';
+
+  // Add options for each level from ChessHabits.HABITS_DATA
+  if (ChessHabits && ChessHabits.HABITS_DATA) {
+    Object.keys(ChessHabits.HABITS_DATA).forEach(levelKey => {
+      const option = document.createElement('option');
+      option.value = levelKey;
+      option.textContent = ChessHabits.HABITS_DATA[levelKey].title; // Use title from data for display
+      select.appendChild(option);
+    });
+  }
+
+  levelSelector.appendChild(select);
+  return { levelSelector, select };
+}
+
+/**
+ * Creates the container element for displaying habits.
+ * This is where individual habit outlines and details will be added.
+ * @returns {HTMLElement} The habits container element (div).
+ */
+function createHabitsContainerElement() {
+  const habitsContainer = document.createElement('div');
+  habitsContainer.className = 'chess-habits-container';
+  return habitsContainer;
+}
+
+/**
+ * Attaches event listeners to the header buttons (close and minimize).
+ * @param {HTMLElement} reminderBox - The main reminder box element.
+ * @param {HTMLElement} closeButton - The close button element.
+ * @param {HTMLElement} minimizeButton - The minimize button element.
+ */
+function attachHeaderEventListeners(reminderBox, closeButton, minimizeButton) {
+  closeButton.addEventListener('click', function() {
+    reminderBox.remove(); // Remove the reminder box from the DOM
+  });
+
+  minimizeButton.addEventListener('click', function() {
+    reminderBox.classList.toggle('chess-habits-minimized'); // Toggle minimized state
+    // Change button text based on state (+ for minimized, − for normal)
+    minimizeButton.textContent = reminderBox.classList.contains('chess-habits-minimized') ? '+' : '−';
+  });
+}
+
+/**
+ * Updates the habits displayed in the reminder box based on the selected level.
+ * Clears existing habits and populates new ones from ChessHabits.HABITS_DATA.
+ * @param {string} level - The selected level key (e.g., "level1").
+ */
 function updateHabitsForLevel(level) {
-    document.querySelector('.chess-habits-reminder-box').setAttribute('data-level', level);
-  
-    const habitsContainer = document.querySelector('.chess-habits-container');
-    if (!habitsContainer) return;
+  const reminderBox = document.querySelector('.chess-habits-reminder-box');
+  if (!reminderBox) return; // Exit if reminder box is not found
+  reminderBox.setAttribute('data-level', level); // Set data attribute for level-specific styling
 
-    // Clear existing habits
-    habitsContainer.innerHTML = '';
+  const habitsContainer = reminderBox.querySelector('.chess-habits-container');
+  if (!habitsContainer) return; // Exit if habits container is not found
 
-    // Get habits data for the selected level
-    // Check if HABITS_DATA is available from data.js
-    if (typeof HABITS_DATA === 'undefined') {
-        console.error("HABITS_DATA is not defined. Using fallback data.");
-        // Use fallback data
-        updateHabitsWithFallbackData(level, habitsContainer);
-        return;
-    }
+  // Clear existing habits before adding new ones
+  habitsContainer.innerHTML = '';
 
-    const habits = HABITS_DATA[level];
-    if (!habits) {
-        console.error("Level data not found:", level);
-        return;
-    }
+  // Get habits data for the selected level
+  const habits = ChessHabits.HABITS_DATA[level];
+  if (!habits) {
+    console.error("Level data not found:", level);
+    return;
+  }
 
-    // Create habits list
-    habits.outlines.forEach((outline, index) => {
-        // Create outline element
-        const outlineElement = document.createElement('div');
-        outlineElement.className = 'chess-habits-outline';
-        outlineElement.textContent = outline;
+  // Create and append habit elements (outline and details)
+  habits.outlines.forEach((outline, index) => {
+    const outlineElement = document.createElement('div');
+    outlineElement.className = 'chess-habits-outline';
+    outlineElement.textContent = outline;
 
-        // Add toggle icon
-        const toggleIcon = document.createElement('span');
-        toggleIcon.className = 'chess-habits-toggle-icon';
-        toggleIcon.textContent = '▼';
-        outlineElement.appendChild(toggleIcon);
+    const toggleIcon = document.createElement('span');
+    toggleIcon.className = 'chess-habits-toggle-icon';
+    toggleIcon.textContent = '▼'; // Down arrow for expandable
+    outlineElement.appendChild(toggleIcon);
 
-        // Create details element
-        const detailsElement = document.createElement('div');
-        detailsElement.className = 'chess-habits-details';
+    const detailsElement = document.createElement('div');
+    detailsElement.className = 'chess-habits-details';
+    // Get corresponding detail if available, otherwise provide a default message
+    detailsElement.textContent = (index < habits.details.length) ? habits.details[index] : 'No additional details available.';
 
-        // Get corresponding detail if available
-        if (index < habits.details.length) {
-            detailsElement.textContent = habits.details[index];
-        } else {
-            detailsElement.textContent = 'No additional details available.';
-        }
-
-        // Add click event to toggle details
-        outlineElement.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent triggering drag
-            this.classList.toggle('chess-habits-expanded');
-            detailsElement.classList.toggle('chess-habits-visible');
-        });
-
-        // Add to container
-        habitsContainer.appendChild(outlineElement);
-        habitsContainer.appendChild(detailsElement);
-    });
-}
-
-// Fallback data function in case HABITS_DATA is not available
-function updateHabitsWithFallbackData(level, container) {
-    const fallbackData = {
-        level1: {
-            outlines: ["NO PREMOVES", "NO TACTICS", "NO GAMBITS", "NO SACRIFICES"],
-            details: [
-                "KNOW HOW ALL PIECES MOVE",
-                "CONTROL AND MOVE TOWARDS CENTER",
-                "CASTLE ASAP & ALWAYS TRADE PIECES",
-                "DON'T HANG FREE PIECES & TAKE FREE PIECES",
-                "ACTIVATE KING IN ENDGAME & ATTACK PAWNS"
-            ]
-        }
-    };
-
-    // Use level1 as fallback for all levels
-    const habits = fallbackData.level1;
-
-    // Create habits list
-    habits.outlines.forEach((outline, index) => {
-        // Create outline element
-        const outlineElement = document.createElement('div');
-        outlineElement.className = 'chess-habits-outline';
-        outlineElement.textContent = outline;
-
-        // Add toggle icon
-        const toggleIcon = document.createElement('span');
-        toggleIcon.className = 'chess-habits-toggle-icon';
-        toggleIcon.textContent = '▼';
-        outlineElement.appendChild(toggleIcon);
-
-        // Create details element
-        const detailsElement = document.createElement('div');
-        detailsElement.className = 'chess-habits-details';
-
-        // Get corresponding detail if available
-        if (index < habits.details.length) {
-            detailsElement.textContent = habits.details[index];
-        } else {
-            detailsElement.textContent = 'No additional details available.';
-        }
-
-        // Add click event to toggle details
-        outlineElement.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent triggering drag
-            this.classList.toggle('chess-habits-expanded');
-            detailsElement.classList.toggle('chess-habits-visible');
-        });
-
-        // Add to container
-        container.appendChild(outlineElement);
-        container.appendChild(detailsElement);
+    // Add click event to toggle visibility of details
+    outlineElement.addEventListener('click', function(e) {
+      e.stopPropagation(); // Prevent event from bubbling up, e.g., to drag handle
+      this.classList.toggle('chess-habits-expanded');
+      detailsElement.classList.toggle('chess-habits-visible');
     });
 
-    // Add a message about the fallback
-    const fallbackMessage = document.createElement('div');
-    fallbackMessage.className = 'chess-habits-fallback-message';
-    fallbackMessage.textContent = 'Using fallback data. Please reload the extension.';
-    container.appendChild(fallbackMessage);
+    habitsContainer.appendChild(outlineElement);
+    habitsContainer.appendChild(detailsElement);
+  });
 }
 
-// Make an element draggable
+/**
+ * Makes a given HTML element draggable by its handle.
+ * Allows the user to move the reminder box around the screen.
+ * @param {HTMLElement} element - The element to make draggable (reminderBox).
+ * @param {HTMLElement} handle - The specific part of the element that acts as a drag handle.
+ */
 function makeDraggable(element, handle) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0; // Variables to store cursor positions
 
-    handle.onmousedown = dragMouseDown;
+  handle.onmousedown = dragMouseDown; // Assign mousedown event to the handle
 
-    function dragMouseDown(e) {
-        e.preventDefault();
-        // Get mouse position at startup
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        // Call function whenever the cursor moves
-        document.onmousemove = elementDrag;
-    }
+  // Function called when the mouse button is pressed down on the handle
+  function dragMouseDown(e) {
+    e.preventDefault(); // Prevent default browser action (e.g., text selection)
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement; // Assign mouseup event to the document (stops dragging)
+    document.onmousemove = elementDrag; // Assign mousemove event to the document (moves the element)
+  }
 
-    function elementDrag(e) {
-        e.preventDefault();
-        // Calculate new position
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        // Set element's new position
-        element.style.top = (element.offsetTop - pos2) + "px";
-        element.style.left = (element.offsetLeft - pos1) + "px";
-        element.style.right = 'auto';
-    }
+  // Function called when the mouse cursor moves
+  function elementDrag(e) {
+    e.preventDefault();
+    // Calculate the new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // Set the element's new position
+    element.style.top = (element.offsetTop - pos2) + "px";
+    element.style.left = (element.offsetLeft - pos1) + "px";
+  }
 
-    function closeDragElement() {
-        // Stop moving when mouse button is released
-        document.onmouseup = null;
-        document.onmousemove = null;
+  // Function called when the mouse button is released
+  function closeDragElement() {
+    // Stop moving when mouse button is released by removing event listeners
+    document.onmouseup = null;
+    document.onmousemove = null;
 
-        // Save position
-        chrome.storage.sync.set({
-            position: {
-                top: element.style.top,
-                left: element.style.left
-            }
-        });
-    }
-}
-
-// Initialize the extension
-function initialize() {
-    // Create reminder if enabled
-    chrome.storage.sync.get('showReminder', function(result) {
-        const showReminder = result.showReminder !== undefined ? result.showReminder : true;
-
-        if (showReminder && window.location.hostname.includes('chess.com')) {
-            setTimeout(function() {
-                if (!document.querySelector('.chess-habits-reminder')) {
-                    createHabitsReminder();
-                }
-            }, 1500);
-
-        }
+    // Save the final position to Chrome storage
+    chrome.storage.sync.set({
+      position: {
+        top: element.style.top,
+        left: element.style.left
+      }
     });
+  }
 }
 
-// Run initialization when the page is fully loaded
-if (document.readyState === 'complete') {
-    initialize();
-} else {
-    window.addEventListener('load', initialize);
-}
+/**
+ * Initializes the extension.
+ * Checks stored settings to determine if the reminder box should be created on the current page.
+ * The reminder is only created on chess.com pages.
+ */
+function initialize() {
+  // Check if the reminder should be shown based on stored settings
+  chrome.storage.sync.get('showReminder', function(result) {
+    const showReminder = result.showReminder !== undefined ? result.showReminder : true; // Default to true
 
-// Listen for messages from the popup
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    if (message.action === "showReminder") {
-        createHabitsReminder();
-
-        // Highlight it briefly
-        setTimeout(function() {
-            const reminder = document.querySelector('.chess-habits-reminder-box');
-            if (reminder) {
-                reminder.style.boxShadow = '0 0 0 3px #4285F4';
-                setTimeout(function() {
-                    reminder.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-                }, 1000);
-            }
-        }, 100);
-    } else if (message.action === "updateLevel") {
-        // Update the level when changed from popup
-        const select = document.querySelector('.chess-habits-level-select');
-        if (select && message.level) {
-            select.value = message.level;
-            updateHabitsForLevel(message.level);
+    // Create reminder only if enabled and on a chess.com domain
+    if (showReminder && window.location.hostname.includes('chess.com')) {
+      // Delay creation slightly to ensure page elements are loaded
+      setTimeout(function() {
+        // Check if reminder box already exists (e.g. from previous navigation)
+        if (!document.querySelector('.chess-habits-reminder')) {
+          createHabitsReminder();
         }
-    } else if (message.action === "getSelectedLevel") {
-        const select = document.querySelector('.chess-habits-level-select');
-        if (select) {
-            sendResponse({ level: select.value });
-        } else {
-            // If reminder box doesn't exist, get from storage
-            chrome.storage.sync.get('selectedLevel', function(result) {
-                sendResponse({ level: result.selectedLevel || 'level1' });
-            });
-            return true; // Required for async response
-        }
+      }, 1500);
     }
+  });
+}
+
+// Run initialization when the page is fully loaded or if already loaded
+if (document.readyState === 'complete') {
+  initialize();
+} else {
+  window.addEventListener('load', initialize);
+}
+
+/**
+ * Listens for messages from the popup script or other parts of the extension.
+ * Handles actions like:
+ * - "showReminder": Creates the reminder box.
+ * - "updateLevel": Updates the displayed habits to a new level.
+ * - "getSelectedLevel": Returns the currently selected level from the page or storage.
+ */
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+  const reminderBox = document.querySelector('.chess-habits-reminder-box');
+  const levelSelect = document.querySelector('.chess-habits-level-select');
+
+  switch (message.action) {
+    case "showReminder":
+      createHabitsReminder();
+      // Highlight the reminder box briefly after creation for user feedback
+      setTimeout(function() {
+        const currentReminderBox = document.querySelector('.chess-habits-reminder-box');
+        if (currentReminderBox) {
+          currentReminderBox.style.boxShadow = '0 0 0 3px #4285F4'; // Temporary highlight
+          setTimeout(function() {
+            currentReminderBox.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)'; // Restore original shadow
+          }, 1000);
+        }
+      }, 100);
+      break;
+    case "updateLevel":
+      // Update the level if the select element exists and a level is provided
+      if (levelSelect && message.level) {
+        levelSelect.value = message.level;
+        updateHabitsForLevel(message.level);
+      }
+      break;
+    case "getSelectedLevel":
+      if (levelSelect) {
+        sendResponse({ level: levelSelect.value });
+      } else {
+        // If reminder box (and thus select element) doesn't exist, get level from storage
+        chrome.storage.sync.get('selectedLevel', function(result) {
+          sendResponse({ level: result.selectedLevel || 'level1' }); // Default to level1
+        });
+        return true; // Indicates that the response will be sent asynchronously
+      }
+      break;
+  }
 });
